@@ -53,11 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
 
     const grid = document.querySelector('.grid')
-    var result = document.querySelector('#result')    
+    var result = document.querySelector('#result')
     var cardsChosen = []
     var cardsChosenId = []
+    var cardsFlipped = []
     var pairsFounded = 0
-    
+
     //create your board
     function createBoard() {
         for (let i = 0; i < cardArray.length; i++) {
@@ -70,16 +71,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     //check for matches
-    function checkForMatch() {     
-        var cards = document.querySelectorAll('img')   
-        console.log(cardsChosen)
+    function checkForMatch() {
+        var cards = document.querySelectorAll('img')
         if (cardsChosen[0] === cardsChosen[1]) {
             cardsChosenId.map(id => {
                 cards[id].setAttribute('src', 'images/white.png')
             })
             pairsFounded++
+            cardsFlipped = [...cardsFlipped, ...cardsChosenId]
             cardsChosen = []
             cardsChosenId = []
+
+            if (pairsFounded == cardArray.length / 2) {
+                setTimeout(() => {
+                    alert("Ganaste el juego")
+                    location.reload()
+                }, 500)
+            }
+
         } else {
             cardsChosenId.map(id => {
                 cards[id].setAttribute('src', 'images/blank.png')
@@ -87,14 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
             cardsChosen = []
             cardsChosenId = []
         }
-        
+
         result.textContent = pairsFounded
     }
 
     //flip your card
     function flipCard() {
         var cardId = this.getAttribute('data-id')
-        if (cardsChosenId.includes(cardId)) {
+        if (cardsChosenId.includes(cardId) || cardsFlipped.includes(cardId) || cardsChosen.length == 2) {
             return
         }
         cardsChosen.push(cardArray[cardId].name)
